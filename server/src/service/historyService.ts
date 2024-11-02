@@ -16,8 +16,7 @@ class HistoryService {
   // TODO: Define a read method that reads from the searchHistory.json file
   private async read() {
     return await fs.readFile('searchHistory.json', {
-      flag: 'a+',
-      encoding: 'utf8',
+        encoding: 'utf8',
     });
   }
   // TODO: Define a write method that writes the updated cities array to the searchHistory.json file
@@ -26,18 +25,21 @@ class HistoryService {
   }
   // TODO: Define a getCities method that reads the cities from the searchHistory.json file and returns them as an array of City objects
   async getCities() {
-    return await this.read().then((cities) => {
-      let parsedCities: City[];
+    const cities = await this.read();
+    let parsedCities: City[];
 
-      try {
-        parsedCities = [].concat(JSON.parse(cities));
-      } catch (err) {
+    try {
+        parsedCities = JSON.parse(cities);
+        if (!Array.isArray(parsedCities)) {
+            throw new Error('Parsed data is not an array');
+        }
+    } catch (err) {
         parsedCities = [];
-      }
+    }
 
-      return parsedCities;
-    });
+    return parsedCities;
   }
+
   // TODO Define an addCity method that adds a city to the searchHistory.json file
   async addCity(city: string) {
     if (!city) {
